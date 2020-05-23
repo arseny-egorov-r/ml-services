@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    ml_services:
+        restart: always
+        build: ./ml_services
+        expose:
+            - "8000"
+        command: gunicorn ml_services.wsgi:application -w 2 -b :8000
+
+    nginx:
+        restart: always
+        build: ./nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ./ml_services/static:/static
+        links:
+            - ml_services:ml_services
